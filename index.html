@@ -181,6 +181,22 @@ body {
   border-radius: var(--radius-sm); padding: 10px 14px;
   font-size: 13px; color: var(--red); margin-bottom: 14px; display: none;
 }
+
+/* SYNC BUTTON */
+.sync-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; margin-bottom: 16px;
+  background: var(--purple-l); border: 1.5px solid #CECBF6;
+  border-radius: var(--radius-sm); padding: 13px 16px;
+  color: var(--purple); font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: background 0.2s, transform 0.1s;
+}
+.sync-btn:active { background: #CECBF6; transform: scale(0.98); }
+.sync-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.sync-btn .btn-icon { font-size: 18px; transition: transform 0.6s; }
+.sync-btn.spinning .btn-icon { animation: spin 0.7s linear infinite; }
+.sync-btn.success { background: var(--green-l); border-color: #9FE1CB; color: var(--green); }
+.sync-btn.error-state { background: var(--red-l); border-color: #F5C4B3; color: var(--red); }
 </style>
 </head>
 <body>
@@ -222,6 +238,11 @@ body {
   </div>
 
   <div class="error-banner" id="error-banner">⚠️ Sin conexión — los cambios se guardarán localmente y se sincronizarán al reconectar.</div>
+
+  <button class="sync-btn" id="sync-btn" onclick="manualSync()">
+    <span class="btn-icon" id="sync-btn-icon">🔄</span>
+    <span id="sync-btn-text">Sincronizar ahora</span>
+  </button>
 
   <div class="metrics">
     <div class="metric c-green"><div class="mlabel">Ingresos</div><div class="mval" id="m-inc">$0</div></div>
@@ -384,6 +405,40 @@ async function saveMonth() {
   }
 }
 
+async function manualSync() {
+  const btn = document.getElementById('sync-btn');
+  const icon = document.getElementById('sync-btn-icon');
+  const txt = document.getElementById('sync-btn-text');
+  btn.disabled = true;
+  btn.classList.remove('success', 'error-state');
+  btn.classList.add('spinning');
+  icon.textContent = '🔄';
+  txt.textContent = 'Sincronizando...';
+  const k = sk(curMonth, curYear);
+  if (!localData[k]) localData[k] = defaultMonth();
+  try {
+    await setDoc(doc(db, 'finanzas', k), localData[k]);
+    btn.classList.remove('spinning');
+    btn.classList.add('success');
+    icon.textContent = '✅';
+    txt.textContent = '¡Sincronizado!';
+    document.getElementById('error-banner').style.display = 'none';
+    showSync(false);
+  } catch(e) {
+    btn.classList.remove('spinning');
+    btn.classList.add('error-state');
+    icon.textContent = '❌';
+    txt.textContent = 'Error — intenta de nuevo';
+    document.getElementById('error-banner').style.display = 'block';
+  }
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.classList.remove('success', 'error-state');
+    icon.textContent = '🔄';
+    txt.textContent = 'Sincronizar ahora';
+  }, 2500);
+}
+
 function scheduleSave() {
   clearTimeout(saveTimeout);
   saveTimeout = setTimeout(saveMonth, 800);
@@ -494,7 +549,8 @@ function renderBar() {
   });
 }
 
-// Exposed globals for inline handlers
+window._manualSync = manualSync;
+
 window._updateItem = (type, idx, field, val) => {
   const k = sk(curMonth, curYear);
   if (!localData[k]) localData[k] = defaultMonth();
@@ -561,6 +617,7 @@ function changeYear(d){ window._changeYear && window._changeYear(d); }
 function prevMonth(){ window._prevMonth && window._prevMonth(); }
 function nextMonth(){ window._nextMonth && window._nextMonth(); }
 function addItem(t){ window._addItem && window._addItem(t); }
+function manualSync(){ window._manualSync && window._manualSync(); }
 </script>
 </body>
 </html>
