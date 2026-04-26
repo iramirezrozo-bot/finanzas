@@ -12,34 +12,42 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #f8f5ff;
-  --surface: #ffffff;
-  --surface2: #f3f0fa;
-  --border: #e2daf5;
-  --text: #1e1a2e;
-  --text2: #6b6180;
-  --text3: #a097b8;
-  --green: #1D9E75;
-  --green-l: #e1f5ee;
-  --red: #D85A30;
-  --red-l: #faece7;
-  --blue: #378ADD;
-  --blue-l: #e6f1fb;
-  --purple: #7F77DD;
-  --purple-l: #eeedfe;
-  --radius: 14px;
-  --radius-sm: 10px;
+  --bg: #f8f5ff; --surface: #ffffff; --surface2: #f3f0fa;
+  --border: #e2daf5; --text: #1e1a2e; --text2: #6b6180; --text3: #a097b8;
+  --green: #1D9E75; --green-l: #e1f5ee;
+  --red: #D85A30; --red-l: #faece7;
+  --blue: #378ADD; --blue-l: #e6f1fb;
+  --purple: #7F77DD; --purple-l: #eeedfe;
+  --radius: 14px; --radius-sm: 10px;
 }
 html { height: 100%; }
 body {
   font-family: -apple-system, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
+  background: var(--bg); color: var(--text);
   min-height: 100%;
   padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
 }
+
+/* LOADER */
+.loader-overlay {
+  position: fixed; inset: 0; background: linear-gradient(135deg, #7F77DD, #5DCAA5);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 999; transition: opacity 0.4s;
+}
+.loader-overlay.hide { opacity: 0; pointer-events: none; }
+.loader-logo { font-size: 48px; margin-bottom: 16px; }
+.loader-title { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.loader-sub { font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 32px; }
+.spinner {
+  width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.3);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* BANNER */
 .top-banner {
   background: linear-gradient(135deg, #7F77DD 0%, #5DCAA5 100%);
   padding: calc(env(safe-area-inset-top, 0px) + 28px) 24px 56px;
@@ -47,36 +55,43 @@ body {
 }
 .top-banner h1 { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
 .top-banner p { font-size: 15px; color: rgba(255,255,255,0.8); margin-top: 4px; }
-.saved-badge {
-  display: inline-block; margin-top: 8px;
-  background: rgba(255,255,255,0.25); color: #fff;
-  font-size: 12px; padding: 4px 12px; border-radius: 20px;
+.sync-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 10px; background: rgba(255,255,255,0.2); color: #fff;
+  font-size: 12px; padding: 5px 14px; border-radius: 20px;
   opacity: 0; transition: opacity 0.3s;
 }
-.saved-badge.show { opacity: 1; }
+.sync-badge.show { opacity: 1; }
+.sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; }
+.sync-dot.syncing { animation: pulse 1s ease-in-out infinite; }
+.sync-dot.ok { background: #9FE1CB; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
 .container { max-width: 800px; margin: 0 auto; padding: 0 16px; }
+
+/* MONTH CARD */
 .month-card {
-  background: var(--surface); border-radius: var(--radius);
-  border: 1px solid var(--border); padding: 14px 18px;
-  margin-top: -28px; display: flex; align-items: center;
-  justify-content: center; gap: 10px;
+  background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border);
+  padding: 14px 18px; margin-top: -28px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
   box-shadow: 0 4px 20px rgba(127,119,221,0.12); margin-bottom: 18px;
 }
 .month-card label { font-size: 14px; color: var(--text2); font-weight: 500; }
 .month-card select {
   font-size: 17px; font-weight: 700; color: var(--purple);
-  border: none; background: transparent; cursor: pointer;
-  outline: none; padding: 2px 6px; -webkit-appearance: none;
+  border: none; background: transparent; cursor: pointer; outline: none;
+  padding: 2px 6px; -webkit-appearance: none;
 }
 .year-nav { display: flex; align-items: center; gap: 8px; }
 .year-btn {
   width: 32px; height: 32px; border-radius: 50%;
   background: var(--purple-l); border: none; color: var(--purple);
-  font-size: 20px; cursor: pointer; display: flex;
-  align-items: center; justify-content: center;
+  font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
 .year-btn:active { background: #CECBF6; transform: scale(0.9); }
 .year-lbl { font-size: 14px; font-weight: 600; color: var(--text2); min-width: 42px; text-align: center; }
+
+/* METRICS */
 .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
 @media(min-width: 600px) { .metrics { grid-template-columns: repeat(4, 1fr); } }
 .metric { border-radius: var(--radius-sm); padding: 14px 16px; border: 1px solid var(--border); }
@@ -90,6 +105,8 @@ body {
 .metric.c-blue .mval { color: var(--blue); }
 .metric.c-purple { background: var(--purple-l); border-color: #CECBF6; }
 .metric.c-purple .mval { color: var(--purple); }
+
+/* SECTIONS */
 .section {
   background: var(--surface); border-radius: var(--radius);
   border: 1px solid var(--border); padding: 16px 18px; margin-bottom: 14px;
@@ -130,58 +147,59 @@ body {
 .add-btn:active { opacity: 0.6; }
 .add-income { color: var(--green); border-color: var(--green); }
 .add-expense { color: var(--red); border-color: var(--red); }
+
+/* CHARTS */
 .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
 @media(max-width: 500px) { .charts-grid { grid-template-columns: 1fr; } }
-.chart-card {
-  background: var(--surface); border-radius: var(--radius);
-  border: 1px solid var(--border); padding: 14px 16px;
-}
-.bar-section {
-  background: var(--surface); border-radius: var(--radius);
-  border: 1px solid var(--border); padding: 16px 18px; margin-bottom: 14px;
-}
+.chart-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 14px 16px; }
+.bar-section { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 16px 18px; margin-bottom: 14px; }
 .chart-label { font-size: 12px; font-weight: 700; color: var(--text2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.6px; }
 .legend-row { display: flex; gap: 16px; margin-top: 10px; justify-content: center; }
 .legend-row span { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); }
 .legend-dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+/* BOTTOM NAV */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0;
   background: rgba(255,255,255,0.93);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
   border-top: 1px solid var(--border);
   padding: 10px 24px calc(10px + env(safe-area-inset-bottom, 0px));
-  display: flex; justify-content: center; align-items: center;
-  gap: 12px; z-index: 100;
+  display: flex; justify-content: center; align-items: center; gap: 12px; z-index: 100;
 }
 .nav-btn {
   background: var(--purple-l); border: none; color: var(--purple);
   font-size: 22px; font-weight: 700; width: 48px; height: 48px;
-  border-radius: 50%; cursor: pointer; display: flex;
-  align-items: center; justify-content: center;
+  border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
 .nav-btn:active { background: #CECBF6; transform: scale(0.9); }
 .nav-month-label { font-size: 17px; font-weight: 700; color: var(--text); min-width: 180px; text-align: center; }
-.install-banner {
-  background: var(--purple-l); border: 1px solid #CECBF6;
-  border-radius: var(--radius-sm); padding: 12px 16px;
-  font-size: 13px; color: var(--purple);
-  margin-bottom: 16px; line-height: 1.6;
-  display: flex; gap: 10px; align-items: flex-start;
-}
-.install-close {
-  margin-left: auto; background: none; border: none;
-  color: var(--text3); font-size: 20px; cursor: pointer;
-  padding: 0 4px; flex-shrink: 0; line-height: 1;
+
+/* ERROR BANNER */
+.error-banner {
+  background: var(--red-l); border: 1px solid #F5C4B3;
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  font-size: 13px; color: var(--red); margin-bottom: 14px; display: none;
 }
 </style>
 </head>
 <body>
 
+<!-- LOADER -->
+<div class="loader-overlay" id="loader">
+  <div class="loader-logo">💃</div>
+  <div class="loader-title">Mis Finanzas</div>
+  <div class="loader-sub">Conectando con la nube...</div>
+  <div class="spinner"></div>
+</div>
+
 <div class="top-banner">
   <h1>Mis Finanzas</h1>
-  <p>Dinero de Andre</p>
-  <div class="saved-badge" id="saved-badge">✓ Guardado</div>
+  <p>Organiza tu dinero mes a mes</p>
+  <div class="sync-badge" id="sync-badge">
+    <span class="sync-dot" id="sync-dot"></span>
+    <span id="sync-text">Sincronizado</span>
+  </div>
 </div>
 
 <div class="container">
@@ -203,14 +221,7 @@ body {
     </div>
   </div>
 
-  <div class="install-banner" id="install-banner">
-    <div>
-      <strong>Agregar al iPad como app:</strong> Abre este archivo en <strong>Safari</strong>,
-      toca el botón de <strong>Compartir</strong> (cuadrito con flecha ↑) y luego
-      <strong>"Añadir a pantalla de inicio"</strong>. Se abre como app sin barra del navegador.
-    </div>
-    <button class="install-close" onclick="closeInstall()">×</button>
-  </div>
+  <div class="error-banner" id="error-banner">⚠️ Sin conexión — los cambios se guardarán localmente y se sincronizarán al reconectar.</div>
 
   <div class="metrics">
     <div class="metric c-green"><div class="mlabel">Ingresos</div><div class="mval" id="m-inc">$0</div></div>
@@ -242,23 +253,17 @@ body {
   <div class="charts-grid">
     <div class="chart-card">
       <div class="chart-label">Ingresos</div>
-      <div style="position:relative;width:100%;height:180px;">
-        <canvas id="incomeChart"></canvas>
-      </div>
+      <div style="position:relative;width:100%;height:180px;"><canvas id="incomeChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-label">Gastos</div>
-      <div style="position:relative;width:100%;height:180px;">
-        <canvas id="expenseChart"></canvas>
-      </div>
+      <div style="position:relative;width:100%;height:180px;"><canvas id="expenseChart"></canvas></div>
     </div>
   </div>
 
   <div class="bar-section">
     <div class="chart-label">Ingresos vs Gastos — últimos 6 meses</div>
-    <div style="position:relative;width:100%;height:220px;">
-      <canvas id="barChart"></canvas>
-    </div>
+    <div style="position:relative;width:100%;height:220px;"><canvas id="barChart"></canvas></div>
     <div class="legend-row">
       <span><span class="legend-dot" style="background:#5DCAA5"></span>Ingresos</span>
       <span><span class="legend-dot" style="background:#F0997B"></span>Gastos</span>
@@ -273,192 +278,289 @@ body {
   <button class="nav-btn" onclick="nextMonth()">›</button>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script>
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBSDJUlcoEP9R16-Tu2UyRyX-aKRxL14eE",
+  authDomain: "mis-finanzas-83178.firebaseapp.com",
+  projectId: "mis-finanzas-83178",
+  storageBucket: "mis-finanzas-83178.firebasestorage.app",
+  messagingSenderId: "799561884396",
+  appId: "1:799561884396:web:985c6245e7d28093fcfbc9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const INC_COLORS = ['#1D9E75','#5DCAA5','#9FE1CB','#378ADD','#85B7EB','#7F77DD','#AFA9EC'];
 const EXP_COLORS = ['#D85A30','#F0997B','#F5C4B3','#BA7517','#EF9F27','#993C1D','#E24B4A'];
-const STORAGE_KEY = 'misfinanzas_v2';
 
 let curMonth = new Date().getMonth();
 let curYear = new Date().getFullYear();
-let allData = {};
+let localData = {};
 let incChart, expChart, barChart;
+let saveTimeout = null;
+let unsubscribe = null;
+let isRendering = false;
 
-function sk(m,y){ return y+'_'+m; }
+// Chart.js via script tag fallback
+async function loadChartJS() {
+  return new Promise(resolve => {
+    if (window.Chart) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js';
+    s.onload = resolve;
+    document.head.appendChild(s);
+  });
+}
 
-function initMonth(m,y){
-  const k=sk(m,y);
-  if(!allData[k]){
-    allData[k]={
-      income:[
-        {name:'Sueldo',amount:2500000},
-        {name:'Clases de baile',amount:800000},
-        {name:'Otros ingresos',amount:300000}
-      ],
-      expense:[
-        {name:'Arriendo',amount:900000},
-        {name:'Clases (entrenamiento)',amount:250000},
-        {name:'Alimentación',amount:400000},
-        {name:'Transporte',amount:150000}
-      ]
-    };
+function sk(m, y) { return `${y}_${m}`; }
+
+function defaultMonth() {
+  return {
+    income: [
+      { name: 'Sueldo', amount: 2500000 },
+      { name: 'Clases de baile', amount: 800000 },
+      { name: 'Otros ingresos', amount: 300000 }
+    ],
+    expense: [
+      { name: 'Arriendo', amount: 900000 },
+      { name: 'Clases (entrenamiento)', amount: 250000 },
+      { name: 'Alimentación', amount: 400000 },
+      { name: 'Transporte', amount: 150000 }
+    ]
+  };
+}
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString('es-CO'); }
+
+function showSync(syncing) {
+  const badge = document.getElementById('sync-badge');
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-text');
+  badge.classList.add('show');
+  if (syncing) {
+    dot.className = 'sync-dot syncing';
+    txt.textContent = 'Sincronizando...';
+  } else {
+    dot.className = 'sync-dot ok';
+    txt.textContent = 'Sincronizado ✓';
+    setTimeout(() => badge.classList.remove('show'), 2500);
   }
 }
 
-function save(){
-  try{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(allData));
-    const b=document.getElementById('saved-badge');
-    b.classList.add('show');
-    setTimeout(()=>b.classList.remove('show'),1800);
-  }catch(e){}
+// Subscribe to real-time updates for current month
+function subscribeMonth(m, y) {
+  if (unsubscribe) unsubscribe();
+  const docRef = doc(db, 'finanzas', sk(m, y));
+  unsubscribe = onSnapshot(docRef, (snap) => {
+    if (snap.exists()) {
+      localData[sk(m, y)] = snap.data();
+    } else {
+      if (!localData[sk(m, y)]) localData[sk(m, y)] = defaultMonth();
+    }
+    if (!isRendering) renderAll();
+  }, (err) => {
+    document.getElementById('error-banner').style.display = 'block';
+    console.error(err);
+  });
 }
 
-function load(){
-  try{
-    const r=localStorage.getItem(STORAGE_KEY);
-    if(r) allData=JSON.parse(r);
-  }catch(e){}
+async function saveMonth() {
+  const k = sk(curMonth, curYear);
+  if (!localData[k]) return;
+  showSync(true);
+  try {
+    await setDoc(doc(db, 'finanzas', k), localData[k]);
+    showSync(false);
+    document.getElementById('error-banner').style.display = 'none';
+  } catch(e) {
+    document.getElementById('error-banner').style.display = 'block';
+    showSync(false);
+  }
 }
 
-function closeInstall(){
-  document.getElementById('install-banner').style.display='none';
-  localStorage.setItem('install_dismissed','1');
+function scheduleSave() {
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(saveMonth, 800);
 }
 
-function fmt(n){ return '$'+Math.round(n).toLocaleString('es-CO'); }
+function renderAll() {
+  isRendering = true;
+  const k = sk(curMonth, curYear);
+  const d = localData[k] || defaultMonth();
 
-function render(){
-  initMonth(curMonth,curYear);
-  const k=sk(curMonth,curYear);
-  const d=allData[k];
-  document.getElementById('monthSel').value=curMonth;
-  document.getElementById('year-lbl').textContent=curYear;
-  document.getElementById('nav-label').textContent=MONTHS[curMonth]+' '+curYear;
+  document.getElementById('monthSel').value = curMonth;
+  document.getElementById('year-lbl').textContent = curYear;
+  document.getElementById('nav-label').textContent = MONTHS[curMonth] + ' ' + curYear;
+
   updateMetrics(d);
-  renderList('income-list',d.income,'income');
-  renderList('expense-list',d.expense,'expense');
-  renderPie('incomeChart',d.income,INC_COLORS,'inc');
-  renderPie('expenseChart',d.expense,EXP_COLORS,'exp');
+  renderList('income-list', d.income, 'income');
+  renderList('expense-list', d.expense, 'expense');
+  renderPie('incomeChart', d.income, INC_COLORS, 'inc');
+  renderPie('expenseChart', d.expense, EXP_COLORS, 'exp');
   renderBar();
+  isRendering = false;
 }
 
-function updateMetrics(d){
-  const ti=d.income.reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
-  const te=d.expense.reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
-  const bal=ti-te;
-  const pct=ti>0?Math.round((bal/ti)*100):0;
-  document.getElementById('m-inc').textContent=fmt(ti);
-  document.getElementById('m-exp').textContent=fmt(te);
-  document.getElementById('m-bal').textContent=fmt(bal);
-  document.getElementById('m-bal').style.color=bal>=0?'var(--blue)':'var(--red)';
-  document.getElementById('m-save').textContent=pct+'%';
-  document.getElementById('m-save').style.color=pct>=0?'var(--purple)':'var(--red)';
-  document.getElementById('inc-total').textContent=fmt(ti);
-  document.getElementById('exp-total').textContent=fmt(te);
+function updateMetrics(d) {
+  const ti = d.income.reduce((s,i) => s+(parseFloat(i.amount)||0), 0);
+  const te = d.expense.reduce((s,i) => s+(parseFloat(i.amount)||0), 0);
+  const bal = ti - te;
+  const pct = ti > 0 ? Math.round((bal/ti)*100) : 0;
+  document.getElementById('m-inc').textContent = fmt(ti);
+  document.getElementById('m-exp').textContent = fmt(te);
+  document.getElementById('m-bal').textContent = fmt(bal);
+  document.getElementById('m-bal').style.color = bal >= 0 ? 'var(--blue)' : 'var(--red)';
+  document.getElementById('m-save').textContent = pct + '%';
+  document.getElementById('m-save').style.color = pct >= 0 ? 'var(--purple)' : 'var(--red)';
+  document.getElementById('inc-total').textContent = fmt(ti);
+  document.getElementById('exp-total').textContent = fmt(te);
 }
 
-function renderList(listId,items,type){
-  const el=document.getElementById(listId);
-  el.innerHTML='';
-  items.forEach((item,i)=>{
-    const row=document.createElement('div');
-    row.className='item-row';
-    row.innerHTML=`
+function renderList(listId, items, type) {
+  const el = document.getElementById(listId);
+  el.innerHTML = '';
+  items.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'item-row';
+    row.innerHTML = `
       <input type="text" value="${item.name}" placeholder="Nombre"
-        oninput="updateItem('${type}',${i},'name',this.value)" />
+        oninput="window._updateItem('${type}',${i},'name',this.value)" />
       <input type="number" value="${item.amount}" placeholder="Monto" inputmode="numeric"
-        oninput="updateItem('${type}',${i},'amount',this.value)" />
-      <button class="del-btn" onclick="delItem('${type}',${i})">×</button>
+        oninput="window._updateItem('${type}',${i},'amount',this.value)" />
+      <button class="del-btn" onclick="window._delItem('${type}',${i})">×</button>
     `;
     el.appendChild(row);
   });
 }
 
-function renderPie(canvasId,items,colors,id){
-  const ex=id==='inc'?incChart:expChart;
-  if(ex) ex.destroy();
-  const chart=new Chart(document.getElementById(canvasId),{
-    type:'doughnut',
-    data:{
-      labels:items.map(i=>i.name),
-      datasets:[{data:items.map(i=>parseFloat(i.amount)||0),backgroundColor:colors.slice(0,items.length),borderWidth:2,borderColor:'#ffffff'}]
+function renderPie(canvasId, items, colors, id) {
+  const ex = id === 'inc' ? incChart : expChart;
+  if (ex) ex.destroy();
+  const chart = new Chart(document.getElementById(canvasId), {
+    type: 'doughnut',
+    data: {
+      labels: items.map(i => i.name),
+      datasets: [{ data: items.map(i => parseFloat(i.amount)||0), backgroundColor: colors.slice(0,items.length), borderWidth: 2, borderColor: '#ffffff' }]
     },
-    options:{
-      responsive:true,maintainAspectRatio:false,cutout:'56%',
-      plugins:{
-        legend:{display:true,position:'bottom',labels:{boxWidth:9,font:{size:10},color:'#6b6180',padding:8}},
-        tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)}}
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '56%',
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { boxWidth: 9, font: { size: 10 }, color: '#6b6180', padding: 8 } },
+        tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.raw) } }
       }
     }
   });
-  if(id==='inc') incChart=chart; else expChart=chart;
+  if (id === 'inc') incChart = chart; else expChart = chart;
 }
 
-function renderBar(){
-  if(barChart) barChart.destroy();
-  const labels=[],incomes=[],expenses=[];
-  for(let i=5;i>=0;i--){
-    let m=curMonth-i,y=curYear;
-    if(m<0){m+=12;y--;}
-    initMonth(m,y);
-    const d=allData[sk(m,y)];
+function renderBar() {
+  if (barChart) barChart.destroy();
+  const labels = [], incomes = [], expenses = [];
+  for (let i = 5; i >= 0; i--) {
+    let m = curMonth - i, y = curYear;
+    if (m < 0) { m += 12; y--; }
+    const d = localData[sk(m,y)] || { income: [], expense: [] };
     labels.push(MONTHS[m].substring(0,3));
-    incomes.push(d.income.reduce((s,x)=>s+(parseFloat(x.amount)||0),0));
-    expenses.push(d.expense.reduce((s,x)=>s+(parseFloat(x.amount)||0),0));
+    incomes.push(d.income.reduce((s,x) => s+(parseFloat(x.amount)||0),0));
+    expenses.push(d.expense.reduce((s,x) => s+(parseFloat(x.amount)||0),0));
   }
-  barChart=new Chart(document.getElementById('barChart'),{
-    type:'bar',
-    data:{labels,datasets:[
-      {label:'Ingresos',data:incomes,backgroundColor:'#5DCAA5',borderRadius:6},
-      {label:'Gastos',data:expenses,backgroundColor:'#F0997B',borderRadius:6}
-    ]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)}}},
-      scales:{
-        x:{ticks:{color:'#a097b8',font:{size:12}},grid:{display:false}},
-        y:{ticks:{color:'#a097b8',font:{size:12},callback:v=>{
-          if(v>=1000000) return '$'+(v/1000000).toFixed(1)+'M';
-          if(v>=1000) return '$'+(v/1000).toFixed(0)+'K';
+  barChart = new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Ingresos', data: incomes, backgroundColor: '#5DCAA5', borderRadius: 6 },
+        { label: 'Gastos', data: expenses, backgroundColor: '#F0997B', borderRadius: 6 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.raw) } } },
+      scales: {
+        x: { ticks: { color: '#a097b8', font: { size: 12 } }, grid: { display: false } },
+        y: { ticks: { color: '#a097b8', font: { size: 12 }, callback: v => {
+          if (v >= 1000000) return '$'+(v/1000000).toFixed(1)+'M';
+          if (v >= 1000) return '$'+(v/1000).toFixed(0)+'K';
           return '$'+v;
-        }},grid:{color:'rgba(160,151,184,0.15)'}}
+        }}, grid: { color: 'rgba(160,151,184,0.15)' } }
       }
     }
   });
 }
 
-function updateItem(type,idx,field,val){
-  const k=sk(curMonth,curYear);
-  allData[k][type][idx][field]=field==='amount'?(parseFloat(val)||0):val;
-  save();
-  updateMetrics(allData[k]);
-  renderPie('incomeChart',allData[k].income,INC_COLORS,'inc');
-  renderPie('expenseChart',allData[k].expense,EXP_COLORS,'exp');
+// Exposed globals for inline handlers
+window._updateItem = (type, idx, field, val) => {
+  const k = sk(curMonth, curYear);
+  if (!localData[k]) localData[k] = defaultMonth();
+  localData[k][type][idx][field] = field === 'amount' ? (parseFloat(val)||0) : val;
+  updateMetrics(localData[k]);
+  renderPie('incomeChart', localData[k].income, INC_COLORS, 'inc');
+  renderPie('expenseChart', localData[k].expense, EXP_COLORS, 'exp');
   renderBar();
-}
+  scheduleSave();
+};
 
-function addItem(type){
-  const k=sk(curMonth,curYear);
-  allData[k][type].push(type==='income'?{name:'Nuevo ingreso',amount:0}:{name:'Nuevo gasto',amount:0});
-  save(); render();
-}
+window._addItem = (type) => {
+  const k = sk(curMonth, curYear);
+  if (!localData[k]) localData[k] = defaultMonth();
+  localData[k][type].push(type === 'income' ? { name: 'Nuevo ingreso', amount: 0 } : { name: 'Nuevo gasto', amount: 0 });
+  renderAll();
+  scheduleSave();
+};
 
-function delItem(type,idx){
-  const k=sk(curMonth,curYear);
-  allData[k][type].splice(idx,1);
-  save(); render();
-}
+window._delItem = (type, idx) => {
+  const k = sk(curMonth, curYear);
+  if (!localData[k]) return;
+  localData[k][type].splice(idx, 1);
+  renderAll();
+  scheduleSave();
+};
 
-function changeMonth(){ curMonth=parseInt(document.getElementById('monthSel').value); render(); }
-function changeYear(dir){ curYear+=dir; render(); }
-function prevMonth(){ if(curMonth===0){curMonth=11;curYear--;}else curMonth--; render(); }
-function nextMonth(){ if(curMonth===11){curMonth=0;curYear++;}else curMonth++; render(); }
+window._changeMonth = () => {
+  curMonth = parseInt(document.getElementById('monthSel').value);
+  subscribeMonth(curMonth, curYear);
+};
 
-if(localStorage.getItem('install_dismissed')) document.getElementById('install-banner').style.display='none';
-load();
-render();
+window._changeYear = (dir) => {
+  curYear += dir;
+  subscribeMonth(curMonth, curYear);
+};
+
+window._prevMonth = () => {
+  if (curMonth === 0) { curMonth = 11; curYear--; } else curMonth--;
+  subscribeMonth(curMonth, curYear);
+};
+
+window._nextMonth = () => {
+  if (curMonth === 11) { curMonth = 0; curYear++; } else curMonth++;
+  subscribeMonth(curMonth, curYear);
+};
+
+// Init
+await loadChartJS();
+document.getElementById('monthSel').value = curMonth;
+subscribeMonth(curMonth, curYear);
+
+// Hide loader after first data load
+setTimeout(() => {
+  document.getElementById('loader').classList.add('hide');
+  setTimeout(() => document.getElementById('loader').remove(), 500);
+}, 1500);
+</script>
+
+<!-- Wire up button handlers (needed because module scope) -->
+<script>
+function changeMonth(){ window._changeMonth && window._changeMonth(); }
+function changeYear(d){ window._changeYear && window._changeYear(d); }
+function prevMonth(){ window._prevMonth && window._prevMonth(); }
+function nextMonth(){ window._nextMonth && window._nextMonth(); }
+function addItem(t){ window._addItem && window._addItem(t); }
 </script>
 </body>
 </html>
